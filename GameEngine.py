@@ -2,23 +2,24 @@ import pygame
 import pygame.freetype
 import DungeonMap
 import Character
+import Tile
+
 pygame.init()
 
 pygame.display.set_caption("PyCrawler1.0")
-map_width = 640
-map_height = 500
-vel = 15
+map_width = 610
+map_height = 320
 clock = pygame.time.Clock()
 
 dungeon_map = DungeonMap.DungeonMap(map_width,map_height)
-player1 = Character.Character(120,120,20,20)
+player1 = Character.Player(120,120,20,20,5,dungeon_map)
+npc = Character.WeakNpc(320,250,20,20,5,dungeon_map)
 
 
 def redrawGameWindow():
-    #dungeon_map.window.blit((0,0,0), (0, 0))
-    #dungeon_map.window.fill((255, 255, 255))
     dungeon_map.drawMap()
     player1.walk(dungeon_map.window)
+    npc.walk(dungeon_map.window)
     pygame.display.update()
 
 if __name__ == "__main__":

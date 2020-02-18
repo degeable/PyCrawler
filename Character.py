@@ -1,14 +1,22 @@
 import DungeonMap
 import pygame
+import random
+from abc import abstractmethod, ABC
 
-class Character():
+keys = 0
+counter = 0
 
-    def __init__(self,x,y,width,height):
+
+class Character(ABC):
+
+    def __init__(self,x,y,width,height,vel,_map):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.vel = 5
+        self.vel = vel
+        self._map = _map
+        #TODO plazer model based on type
         self.left = pygame.image.load('src/Character/1.png')
         self.right = pygame.image.load('src/Character/4.png')
         self.up = pygame.image.load('src/Character/2.png')
@@ -17,9 +25,18 @@ class Character():
         self.walkDirection = 8
 
 
+    @abstractmethod
+    def walk(self, window):
+        pass
+
+class Player(Character):
+    def __init__(self,x,y,width,height,vel,_map):
+        super().__init__(x,y,width,height,vel,_map)
 
     def walk(self, window):
-
+        
+        oldX = self.x
+        oldY = self.y
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
@@ -35,23 +52,76 @@ class Character():
         if keys[pygame.K_UP]:
             self.y -= self.vel
             self.walkDirection = 8
-            window.blit(self.up, (self.x, self.y, self.width, self.height))
 
         if keys[pygame.K_DOWN]:
             self.y += self.vel
             self.walkDirection = 2
-            window.blit(self.down, (self.x, self.y, self.width, self.height))
 
-        if self.walkDirection == 4:
+        newPosition = (self.x,self.y)
+        #print(newPosition)
+        for var in range(0,self.width):
+                if (newPosition[0]+var,newPosition[1]+var) in self._map.block_list:
+                    self.x = oldX
+                    self.y = oldY
+        if self.walkDirection == 4: 
             window.blit(self.left, (self.x, self.y, self.width, self.height))
+                      
         elif self.walkDirection == 6:
             window.blit(self.right, (self.x, self.y, self.width, self.height))
+
         elif self.walkDirection == 8:
             window.blit(self.up, (self.x, self.y, self.width, self.height))
+
         elif self.walkDirection == 2:
             window.blit(self.down, (self.x, self.y, self.width, self.height))
 
+        
 
+
+class WeakNpc(Character):
+    def __init__(self,x,y,width,height,vel,_map):
+        super().__init__(x,y,width,height,vel,_map)
+
+    def walk(self, window):
+        
+        global counter
+        global keys
+        counter += 1
+        
+        if counter > keys+4:
+            counter = 0
+            keys =  random.randrange(1, 5, 1)
+
+        if keys == 1:
+            self.x -= self.vel
+            self.walkDirection = 4
+
+
+        if keys == 2:
+            self.x += self.vel
+            self.walkDirection = 6
+
+
+        if keys == 3:
+            self.y -= self.vel
+            self.walkDirection = 8
+
+        if keys == 4:
+            self.y += self.vel
+            self.walkDirection = 2
+
+
+        if self.walkDirection == 4: 
+            window.blit(self.left, (self.x, self.y, self.width, self.height))           
+                
+        elif self.walkDirection == 6:
+            window.blit(self.right, (self.x, self.y, self.width, self.height))
+
+        elif self.walkDirection == 8:
+            window.blit(self.up, (self.x, self.y, self.width, self.height))
+
+        elif self.walkDirection == 2:
+            window.blit(self.down, (self.x, self.y, self.width, self.height))
 
 
 
