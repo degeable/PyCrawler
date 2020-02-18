@@ -12,24 +12,23 @@ class DungeonMap():
 
         self.window = pygame.display.set_mode((width, height))
         #self.background = pygame.image.load('src/bg.jpg')
-        self.walls = self.loadWalls(level)
-        self.block_list = []
-        for wall in self.walls:
-            if wall.blocking == True:
-                for i in range(0,32):
-                    for j in range(0,32):
-                        self.block_list.append((wall.x+i-8,wall.y+j-16))
-
+        self.level = self.loadLevel(level)
+        self.tiles = pygame.sprite.Group()
+        self.blockingSprites = pygame.sprite.Group()
+        for block in self.level:
+            self.tiles.add(block)
+            if block.blocking == True:
+                self.blockingSprites.add(block)
+                
 
 
     def drawMap(self):
         #self.window.blit(self.background,(0,0))
-        for wall in self.walls:
-            #print(wall.type)
-            wall.draw(self.window)
+        self.tiles.update()
+        self.tiles.draw(self.window)
 
 
-    def loadWalls(self,level):
+    def loadLevel(self,level):
         tiles = []
         x = -64
         y = -64

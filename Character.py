@@ -7,80 +7,102 @@ keys = 0
 counter = 0
 
 
-class Character(ABC):
+class Character(pygame.sprite.Sprite):
 
-    def __init__(self,x,y,width,height,vel,_map):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+    def __init__(self,x,y,width,height,vel,map):
+        pygame.sprite.Sprite.__init__(self)
         self.vel = vel
-        self._map = _map
         #TODO plazer model based on type
-        self.left = pygame.image.load('src/Character/1.png')
-        self.right = pygame.image.load('src/Character/4.png')
-        self.up = pygame.image.load('src/Character/2.png')
-        self.down = pygame.image.load('src/Character/3.png')
+        self.map = map
+        self.left = pygame.image.load('src/Character/1.png').convert()
+        self.right = pygame.image.load('src/Character/4.png').convert()
+        self.up = pygame.image.load('src/Character/2.png').convert()
+        self.down = pygame.image.load('src/Character/3.png').convert()
         self.walkCount = 0
         self.walkDirection = 8
 
+    @abstractmethod
+    def collision(self,blocksGroup):
+        pass
 
     @abstractmethod
     def walk(self, window):
         pass
 
 class Player(Character):
-    def __init__(self,x,y,width,height,vel,_map):
-        super().__init__(x,y,width,height,vel,_map)
+    def __init__(self,x,y,width,height,vel,map):
+        super().__init__(x,y,width,height,vel,map)
+        self.image = self.down
+        self.image.set_colorkey((0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.oldx = x
+        self.oldy = y
+        self.rect.width = width
+        self.rect.height = height
+        
+    def collision(self,blocksGroup):
+        if pygame.sprite.spritecollide(self,blocksGroup,False):
+            self.rect.x = self.oldx
+            self.rect.y  = self.oldy
 
     def walk(self, window):
         
-        oldX = self.x
-        oldY = self.y
         keys = pygame.key.get_pressed()
-
+        self.oldx = self.rect.x
+        self.oldy = self.rect.y
         if keys[pygame.K_LEFT]:
-            self.x -= self.vel
+            self.rect.x -= self.vel
+            self.collision(self.map.blockingSprites)
             self.walkDirection = 4
+            self.image = self.left
+            self.image.set_colorkey((0,0,0))
 
 
         if keys[pygame.K_RIGHT]:
-            self.x += self.vel
+            self.rect.x += self.vel
+            self.collision(self.map.blockingSprites)
             self.walkDirection = 6
+            self.image = self.right
+            self.image.set_colorkey((0,0,0))
 
 
         if keys[pygame.K_UP]:
-            self.y -= self.vel
+            self.rect.y -= self.vel
+            self.collision(self.map.blockingSprites)
             self.walkDirection = 8
+            self.image = self.up
+            self.image.set_colorkey((0,0,0))
 
         if keys[pygame.K_DOWN]:
-            self.y += self.vel
+            self.rect.y += self.vel
+            self.collision(self.map.blockingSprites)
             self.walkDirection = 2
+            self.image = self.down
+            self.image.set_colorkey((0,0,0))
 
-        newPosition = (self.x,self.y)
-        #print(newPosition)
-        for var in range(0,self.width):
-                if (newPosition[0]+var,newPosition[1]+var) in self._map.block_list:
-                    self.x = oldX
-                    self.y = oldY
-        if self.walkDirection == 4: 
-            window.blit(self.left, (self.x, self.y, self.width, self.height))
-                      
-        elif self.walkDirection == 6:
-            window.blit(self.right, (self.x, self.y, self.width, self.height))
-
-        elif self.walkDirection == 8:
-            window.blit(self.up, (self.x, self.y, self.width, self.height))
-
-        elif self.walkDirection == 2:
-            window.blit(self.down, (self.x, self.y, self.width, self.height))
 
         
 
 
 class WeakNpc(Character):
-    def __init__(self,x,y,width,height,vel,_map):
-        super().__init__(x,y,width,height,vel,_map)
+    def __init__(self,x,y,width,height,vel,map):
+        super().__init__(x,y,width,height,vel,map)
+        self.image = self.down
+        self.image.set_colorkey((0,0,0))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.oldx = x
+        self.oldy = y
+        self.rect.width = width
+        self.rect.height = height
+
+    def collision(self,blocksGroup):
+        if pygame.sprite.spritecollide(self,blocksGroup,False):
+            self.rect.x = self.oldx
+            self.rect.y = self.oldy 
 
     def walk(self, window):
         
@@ -91,37 +113,32 @@ class WeakNpc(Character):
         if counter > keys+4:
             counter = 0
             keys =  random.randrange(1, 5, 1)
-
+        self.oldx = self.rect.x
+        self.oldy = self.rect.y
         if keys == 1:
-            self.x -= self.vel
+            self.rect.x -= self.vel
             self.walkDirection = 4
+            self.image = self.left
+            self.image.set_colorkey((0,0,0))
 
 
         if keys == 2:
-            self.x += self.vel
+            self.rect.x += self.vel
             self.walkDirection = 6
-
+            self.image = self.right
+            self.image.set_colorkey((0,0,0))
 
         if keys == 3:
-            self.y -= self.vel
+            self.rect.y -= self.vel
             self.walkDirection = 8
+            self.image = self.up
+            self.image.set_colorkey((0,0,0))
 
         if keys == 4:
-            self.y += self.vel
+            self.rect.y += self.vel
             self.walkDirection = 2
-
-
-        if self.walkDirection == 4: 
-            window.blit(self.left, (self.x, self.y, self.width, self.height))           
-                
-        elif self.walkDirection == 6:
-            window.blit(self.right, (self.x, self.y, self.width, self.height))
-
-        elif self.walkDirection == 8:
-            window.blit(self.up, (self.x, self.y, self.width, self.height))
-
-        elif self.walkDirection == 2:
-            window.blit(self.down, (self.x, self.y, self.width, self.height))
+            self.image = self.down
+            self.image.set_colorkey((0,0,0))
 
 
 

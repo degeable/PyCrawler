@@ -3,7 +3,7 @@ from abc import abstractmethod, ABC
 
 
 
-class Tile(ABC):
+class Tile(pygame.sprite.Sprite):
 
     def __init__(self,x,y,width,height,blocking= True):
         """
@@ -14,44 +14,52 @@ class Tile(ABC):
         :param blocking: path blocking = True
         :param type: type = "wall"
         """
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        pygame.sprite.Sprite.__init__(self)
         self.blocking = blocking
 
     @abstractmethod     
     def getType():
         pass
 
-    @abstractmethod
-    def draw(self,window):
-        pass
+ #   @abstractmethod
+  #  def draw(self,window):
+  #      pass
 
 class Wall(Tile):
 
     def __init__(self, x, y, width, height, blocking = True):
         super().__init__(x, y, width, height, blocking)
-        self.wall = pygame.image.load('src/Textures/Industrial/CROSSCUBE.png')
+        self.image = pygame.image.load('src/Textures/Industrial/CROSSCUBE.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = width
+        self.rect.height = height
 
     def getType():
         return "wall"
 
-    def draw(self,window):
-        window.blit(self.wall,(self.x, self.y, self.width, self.height))
-        
+#    def draw(self,window):
+ #       self.image.draw(window)       
 
 class Floor(Tile):
 
     def __init__(self, x, y, width, height, blocking = False):
         super().__init__(x, y, width, height, blocking)
-        self.floor = pygame.image.load('src/Textures/Wood/CREAKYWOOD.png')
+        self.image = pygame.image.load('src/Textures/Wood/CREAKYWOOD.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = width
+        self.rect.height = height
+        
 
     def getType():
         return "floor"
 
-    def draw(self,window):
-        window.blit(self.floor,(self.x, self.y, self.width, self.height))
-
+  #  def draw(self,window):
+   #
+   #      self.image.draw(window)
+        
 
         
