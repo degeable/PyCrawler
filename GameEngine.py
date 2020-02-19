@@ -4,6 +4,7 @@ import DungeonMap
 import Character
 import Tile
 import healtbar
+import Item
 
 pygame.init()
 pygame.display.set_caption("PyCrawler1.0")
@@ -19,6 +20,14 @@ player1 = Character.Player(120,120,20,20,5,dungeon_map)
 npc = Character.WeakNpc(320,250,20,20,5,dungeon_map)
 healthPlayer1 = healtbar.healthbar(player1)
 healthNpc = healtbar.healthbar(npc)
+bluepot = Item.Pot('blue',100,100,10)
+redpot = Item.Pot('red',120,120,-5)
+sword = Item.Sword(50,50,5)
+itemlist = [redpot,bluepot,sword]
+itemSprites = pygame.sprite.Group()
+itemSprites.add(bluepot)
+itemSprites.add(redpot)
+itemSprites.add(sword)
 playerSprites = pygame.sprite.Group()
 playerSprites.add(player1)
 playerSprites.add(healthPlayer1)
@@ -28,12 +37,16 @@ playerSprites.add(npc)
 def redrawGameWindow():
     dungeon_map.drawMap()
     if player1.isAlive:
-        player1.walk(dungeon_map.window,playerSprites)
+        player1.walk(dungeon_map.window,playerSprites,itemSprites)
         healthPlayer1.update()
     if npc.isAlive:
         npc.walk(dungeon_map.window)
         healthNpc.update()
-
+    for item in itemlist:
+        if item.pickedUp == True:
+            itemSprites.remove(item)
+    itemSprites.update()
+    itemSprites.draw(dungeon_map.window)
     playerSprites.update()
     playerSprites.draw(dungeon_map.window)
     pygame.display.update()

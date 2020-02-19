@@ -59,12 +59,10 @@ class Player(Character):
         player.health -= self.hitpoints
 
 
-    def collision(self,blocksGroup,playerGroup):
+    def collision(self,blocksGroup,playerGroup,itemSprites):
         hit_blocks = pygame.sprite.spritecollide(self,blocksGroup,False)
         for block in hit_blocks:
-            print(block.getType())
             if block.getType() == "switch":
-                print("stepped on switch!")
                 block.onEnter()
             if block.blocking == True:
                 self.rect.center = [ self.oldx, self.oldy]
@@ -76,9 +74,14 @@ class Player(Character):
             for player in hit_players:
                 if player.__class__.__name__ is not 'healthbar':
                     self.attack(player)
+                    print("Hit: "+str(self.hitpoints))
+        hit_items = pygame.sprite.spritecollide(self,itemSprites,False)
+        for item in hit_items:
+            item.onPickup(self)
+        
 
 
-    def walk(self, window,playerSprites):
+    def walk(self, window,playerSprites,itemSprites):
         
         if self.health < 0:
             self.isAlive = False
@@ -89,7 +92,7 @@ class Player(Character):
         self.oldy = self.rect.center[1]
         if keys[pygame.K_LEFT]:
             self.rect.center  = [self.rect.center[0] - self.vel,self.rect.center[1]]
-            self.collision(self.map.tiles,playerSprites)
+            self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 4
             self.image = self.left
             self.image.set_colorkey((0,0,0))
@@ -107,7 +110,7 @@ class Player(Character):
 
         if keys[pygame.K_RIGHT]:
             self.rect.center  = [self.rect.center[0] + self.vel,self.rect.center[1]]
-            self.collision(self.map.tiles,playerSprites)
+            self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 6
             self.image = self.right
             self.image.set_colorkey((0,0,0))
@@ -115,14 +118,14 @@ class Player(Character):
 
         if keys[pygame.K_UP]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1]- self.vel]
-            self.collision(self.map.tiles,playerSprites)
+            self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 8
             self.image = self.up
             self.image.set_colorkey((0,0,0))
 
         if keys[pygame.K_DOWN]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1] + self.vel]
-            self.collision(self.map.tiles,playerSprites)
+            self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 2
             self.image = self.down
             self.image.set_colorkey((0,0,0))
@@ -148,9 +151,7 @@ class WeakNpc(Character):
     def collision(self,blocksGroup):
         hit_blocks = pygame.sprite.spritecollide(self,blocksGroup,False)
         for block in hit_blocks:
-            print(block.getType())
             if block.getType() == "switch":
-                print("stepped on switch!")
                 block.onEnter()
             if block.blocking == True:
                 self.rect.center = [ self.oldx, self.oldy]
