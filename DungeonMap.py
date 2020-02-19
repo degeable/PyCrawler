@@ -45,6 +45,7 @@ class DungeonMap():
             y += 32
             x = 0
         #print(header.split(" "))
+        #TODO read doors and switches from level.txt
         door = Tile.Door(150,120,32,32)
         switch = Tile.Switch(180,180,32,32,door,'open')
         switch1 = Tile.Switch(220,220,32,32,door,'close')
