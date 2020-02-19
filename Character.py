@@ -43,9 +43,17 @@ class Player(Character):
         self.rect.height = height
         
     def collision(self,blocksGroup):
-        if pygame.sprite.spritecollide(self,blocksGroup,False):
-            self.rect.x = self.oldx
-            self.rect.y  = self.oldy
+        hit_blocks = pygame.sprite.spritecollide(self,blocksGroup,False)
+        for block in hit_blocks:
+            print(block.getType())
+            if block.getType() == "switch":
+                print("stepped on switch!")
+                block.onEnter()
+            if block.blocking == True:
+                self.rect.x = self.oldx
+                self.rect.y  = self.oldy
+
+
 
     def walk(self, window):
         
@@ -54,7 +62,7 @@ class Player(Character):
         self.oldy = self.rect.y
         if keys[pygame.K_LEFT]:
             self.rect.x -= self.vel
-            self.collision(self.map.blockingSprites)
+            self.collision(self.map.tiles)
             self.walkDirection = 4
             self.image = self.left
             self.image.set_colorkey((0,0,0))
@@ -62,7 +70,7 @@ class Player(Character):
 
         if keys[pygame.K_RIGHT]:
             self.rect.x += self.vel
-            self.collision(self.map.blockingSprites)
+            self.collision(self.map.tiles)
             self.walkDirection = 6
             self.image = self.right
             self.image.set_colorkey((0,0,0))
@@ -70,14 +78,14 @@ class Player(Character):
 
         if keys[pygame.K_UP]:
             self.rect.y -= self.vel
-            self.collision(self.map.blockingSprites)
+            self.collision(self.map.tiles)
             self.walkDirection = 8
             self.image = self.up
             self.image.set_colorkey((0,0,0))
 
         if keys[pygame.K_DOWN]:
             self.rect.y += self.vel
-            self.collision(self.map.blockingSprites)
+            self.collision(self.map.tiles)
             self.walkDirection = 2
             self.image = self.down
             self.image.set_colorkey((0,0,0))

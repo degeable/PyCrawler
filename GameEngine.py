@@ -27,6 +27,19 @@ def redrawGameWindow():
     playerSprites.draw(dungeon_map.window)
     pygame.display.update()
 
+
+"""
+def game_intro():
+
+    intro = True
+
+  while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.event.QUIT
+                pygame.quit()
+                quit()
+        gameDisplay.fill(255,255,255)"""
+
 if __name__ == "__main__":
      print("hello")
      run = True
