@@ -18,6 +18,9 @@ class Character(pygame.sprite.Sprite):
         self.left = pygame.transform.rotate(self.baseImage,270)
         self.right = pygame.transform.rotate(self.baseImage,90)
         self.up = pygame.transform.rotate(self.baseImage,180)
+        self.health = 10
+        self.isAlive = True
+   
         """
         #TODO strafing for better movements?
         self.strafeUpRight = pygame.transform.rotate(self.baseImage,135)
@@ -26,6 +29,8 @@ class Character(pygame.sprite.Sprite):
         self.strafeDownLeft = pygame.transform.rotate(self.baseImage,315)
         """
         self.down = self.baseImage
+        #TODO FIGHT animation...
+        #self.fightImage = pygame.image.load('src/Character/Char_attack.png').convert()
         self.walkCount = 0
         self.walkDirection = 8
 
@@ -48,8 +53,13 @@ class Player(Character):
         self.oldy = 0
         self.rect.width = width
         self.rect.height = height
+        self.hitpoints = 1
         
-    def collision(self,blocksGroup):
+    def attack(self,player):
+        player.health -= self.hitpoints
+
+
+    def collision(self,blocksGroup,playerGroup):
         hit_blocks = pygame.sprite.spritecollide(self,blocksGroup,False)
         for block in hit_blocks:
             print(block.getType())
@@ -58,16 +68,28 @@ class Player(Character):
                 block.onEnter()
             if block.blocking == True:
                 self.rect.center = [ self.oldx, self.oldy]
+        hit_players = pygame.sprite.spritecollide(self,playerGroup,False)
+        hit_players.remove(self)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            #self.image = self.fightImage
+            for player in hit_players:
+                if player.__class__.__name__ is not 'healthbar':
+                    self.attack(player)
 
 
-    def walk(self, window):
+    def walk(self, window,playerSprites):
         
+        if self.health < 0:
+            self.isAlive = False
+
+
         keys = pygame.key.get_pressed()
         self.oldx = self.rect.center[0]
         self.oldy = self.rect.center[1]
         if keys[pygame.K_LEFT]:
             self.rect.center  = [self.rect.center[0] - self.vel,self.rect.center[1]]
-            self.collision(self.map.tiles)
+            self.collision(self.map.tiles,playerSprites)
             self.walkDirection = 4
             self.image = self.left
             self.image.set_colorkey((0,0,0))
@@ -85,7 +107,7 @@ class Player(Character):
 
         if keys[pygame.K_RIGHT]:
             self.rect.center  = [self.rect.center[0] + self.vel,self.rect.center[1]]
-            self.collision(self.map.tiles)
+            self.collision(self.map.tiles,playerSprites)
             self.walkDirection = 6
             self.image = self.right
             self.image.set_colorkey((0,0,0))
@@ -93,14 +115,14 @@ class Player(Character):
 
         if keys[pygame.K_UP]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1]- self.vel]
-            self.collision(self.map.tiles)
+            self.collision(self.map.tiles,playerSprites)
             self.walkDirection = 8
             self.image = self.up
             self.image.set_colorkey((0,0,0))
 
         if keys[pygame.K_DOWN]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1] + self.vel]
-            self.collision(self.map.tiles)
+            self.collision(self.map.tiles,playerSprites)
             self.walkDirection = 2
             self.image = self.down
             self.image.set_colorkey((0,0,0))
@@ -119,6 +141,7 @@ class WeakNpc(Character):
         self.rect.y = y
         self.oldx = x
         self.oldy = y
+        self.vel = 1
         self.rect.width = width
         self.rect.height = height
 
