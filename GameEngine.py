@@ -5,23 +5,27 @@ import Character
 import Tile
 import healtbar
 import Item
+import Level
 
 pygame.init()
 pygame.display.set_caption("PyCrawler1.0")
 
 
 largeText = pygame.font.Font('freesansbold.ttf',40)
+files = ["level.txt","characters.txt","items.txt"]
 map_width = 610
 map_height = 320
+global level = Level.Level(files,map_widthm,map_height)
 clock = pygame.time.Clock()
 
+#TODO USE the new level module. replace all the map,player and item stuff with level.map etc...
 dungeon_map = DungeonMap.DungeonMap(map_width,map_height)
 player1 = Character.Player(120,120,20,20,5,dungeon_map)
 npc = Character.WeakNpc(320,250,20,20,5,dungeon_map)
 healthPlayer1 = healtbar.healthbar(player1)
 healthNpc = healtbar.healthbar(npc)
-bluepot = Item.Pot('blue',100,100,10)
-redpot = Item.Pot('red',120,120,-5)
+bluepot = Item.Pot('blue',80,80,10)
+redpot = Item.Pot('red',150,150,-10)
 sword = Item.Sword(50,50,5)
 itemlist = [redpot,bluepot,sword]
 itemSprites = pygame.sprite.Group()
@@ -43,8 +47,11 @@ def redrawGameWindow():
         npc.walk(dungeon_map.window)
         healthNpc.update()
     for item in itemlist:
-        if item.pickedUp == True:
+        if item.pickedUp == True and item.type is not 'weapon':
             itemSprites.remove(item)
+        if item.pickedUp == True and item.type is 'weapon':
+            item.image  = pygame.transform.scale(item.image,(12,12))
+            
     itemSprites.update()
     itemSprites.draw(dungeon_map.window)
     playerSprites.update()

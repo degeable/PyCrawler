@@ -20,14 +20,15 @@ class Character(pygame.sprite.Sprite):
         self.up = pygame.transform.rotate(self.baseImage,180)
         self.health = 10
         self.isAlive = True
+        self.weapon = None
    
-        """
+        
         #TODO strafing for better movements?
         self.strafeUpRight = pygame.transform.rotate(self.baseImage,135)
         self.strafeUpLeft = pygame.transform.rotate(self.baseImage,225)
         self.strafeDownRight = pygame.transform.rotate(self.baseImage,45)
         self.strafeDownLeft = pygame.transform.rotate(self.baseImage,315)
-        """
+        
         self.down = self.baseImage
         #TODO FIGHT animation...
         #self.fightImage = pygame.image.load('src/Character/Char_attack.png').convert()
@@ -60,6 +61,9 @@ class Player(Character):
 
 
     def collision(self,blocksGroup,playerGroup,itemSprites):
+        """
+        TODO Zip those 3 loops into one loop
+        """
         hit_blocks = pygame.sprite.spritecollide(self,blocksGroup,False)
         for block in hit_blocks:
             if block.getType() == "switch":
@@ -90,45 +94,78 @@ class Player(Character):
         keys = pygame.key.get_pressed()
         self.oldx = self.rect.center[0]
         self.oldy = self.rect.center[1]
+
         if keys[pygame.K_LEFT]:
             self.rect.center  = [self.rect.center[0] - self.vel,self.rect.center[1]]
             self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 4
-            self.image = self.left
-            self.image.set_colorkey((0,0,0))
 
-        """
-        #FIXME Strafe attempt
-        if keys[pygame.K_LEFT] and keys[pygame.K_DOWN]:
-            self.rect.center  = [self.rect.center[0] - self.vel/2 ,self.rect.center[1] + self.vel/2]
-            self.collision(self.map.tiles)
-            self.walkDirection = 1
-            self.image = self.strafeDownLeft
-            self.image.set_colorkey((0,0,0))
-        """
 
+        if keys[pygame.K_x]:
+            print("Health: "+str(self.health))
+            print("Hitpoints: "+str(self.hitpoints)) 
 
         if keys[pygame.K_RIGHT]:
             self.rect.center  = [self.rect.center[0] + self.vel,self.rect.center[1]]
             self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 6
-            self.image = self.right
-            self.image.set_colorkey((0,0,0))
+
 
 
         if keys[pygame.K_UP]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1]- self.vel]
             self.collision(self.map.tiles,playerSprites,itemSprites)
             self.walkDirection = 8
-            self.image = self.up
-            self.image.set_colorkey((0,0,0))
+
 
         if keys[pygame.K_DOWN]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1] + self.vel]
             self.collision(self.map.tiles,playerSprites,itemSprites)
-            self.walkDirection = 2
+            self.walkDirection = 2    
+
+        if keys[pygame.K_LEFT] and keys[pygame.K_DOWN]:
+            self.walkDirection = 1
+        if keys[pygame.K_RIGHT] and keys[pygame.K_DOWN]:
+            self.walkDirection = 3
+        if keys[pygame.K_LEFT] and keys[pygame.K_UP]:
+            self.walkDirection = 7
+        if keys[pygame.K_RIGHT] and keys[pygame.K_UP]:
+            self.walkDirection = 9
+
+        
+        if self.walkDirection == 1:
+            self.image = self.strafeDownLeft
+            self.image.set_colorkey((0,0,0))
+        elif self.walkDirection ==2:
             self.image = self.down
             self.image.set_colorkey((0,0,0))
+        elif self.walkDirection ==3:
+            self.image = self.strafeDownRight
+            self.image.set_colorkey((0,0,0)) 
+        elif self.walkDirection ==4:
+            self.image = self.left
+            self.image.set_colorkey((0,0,0)) 
+        elif self.walkDirection ==6:
+            self.image = self.right
+            self.image.set_colorkey((0,0,0))
+        elif self.walkDirection ==7:
+            self.image = self.strafeUpLeft
+            self.image.set_colorkey((0,0,0)) 
+        elif self.walkDirection ==8:
+            self.image = self.up
+            self.image.set_colorkey((0,0,0))
+        elif self.walkDirection ==9:
+            self.image = self.strafeUpRight
+            self.image.set_colorkey((0,0,0)) 
+            
+        if self.weapon is not None:
+             self.weapon.rect.x = self.rect.x-4
+             self.weapon.rect.y = self.rect.y-8
+             
+ 
+
+            
+
 
 
         

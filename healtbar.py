@@ -47,7 +47,7 @@ class healthbar(pygame.sprite.Sprite):
             self.image = self.h2
         if self.player.health == 1:
             self.image = self.h1
-        if self.player.health == 0:
+        if self.player.health <= 0:
             self.image = self.h0
         self.rect.x = self.player.rect.x
         self.rect.y = self.player.rect.y

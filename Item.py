@@ -5,7 +5,6 @@ class Item(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = None
 
     @abstractmethod
     def onPickup(self,player):
@@ -26,13 +25,28 @@ class Pot(Item):
         self.color = color
         self.healthImpact = impact
         self.pickedUp = False
+        self.type = 'pot'
 
     def onPickup(self,player):
         player.health += self.healthImpact
         self.pickedUp = True
         print("Picked up "+self.color+" Pot")
 
-class Sword(Item):
+class Weapon(Item):
+
+    def __init__(self):
+        super().__init__()
+        self.type = 'weapon'
+
+    def onPickup(self,player):
+        self.rect.width = 2
+        self.rect.height = 2
+        player.hitpoints = self.hitpoints
+        player.weapon = self
+        self.pickedUp = True
+        print("Picked up a Weapon")
+
+class Sword(Weapon):
 
     def __init__(self,x,y,impact):
         super().__init__()
@@ -46,9 +60,3 @@ class Sword(Item):
         self.hitpoints = 5
         self.pickedUp = False
 
-    def onPickup(self,player):
-        player.hitpoints = self.hitpoints
-        self.pickedUp = True
-        print("Picked up Sword")
-
-    
