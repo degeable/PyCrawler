@@ -32,7 +32,6 @@ class DungeonMap():
         x = -64
         y = -64
         file = open(level)
-        #header = file.readline()
         lines = file.read().split()
         for line in lines:
             chars = list(line)
