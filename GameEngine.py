@@ -5,7 +5,7 @@ import Character
 import Tile
 import healtbar
 import Item
-import Level
+
 
 pygame.init()
 pygame.display.set_caption("PyCrawler1.0")
@@ -15,7 +15,6 @@ largeText = pygame.font.Font('freesansbold.ttf',40)
 files = ["level.txt","characters.txt","items.txt"]
 map_width = 610
 map_height = 320
-global level = Level.Level(files,map_widthm,map_height)
 clock = pygame.time.Clock()
 
 #TODO USE the new level module. replace all the map,player and item stuff with level.map etc...
@@ -83,8 +82,7 @@ def game_intro():
     
 
 
-
-if __name__ == "__main__":
+def run():
      game_intro()
      run = True
      while run:
