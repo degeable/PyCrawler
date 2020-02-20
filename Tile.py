@@ -3,7 +3,7 @@ from abc import abstractmethod, ABC
 
 
 
-class Tile(ABC):
+class Tile(pygame.sprite.Sprite):
 
     def __init__(self,x,y,width,height,blocking= True):
         """
@@ -14,44 +14,107 @@ class Tile(ABC):
         :param blocking: path blocking = True
         :param type: type = "wall"
         """
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        pygame.sprite.Sprite.__init__(self)
         self.blocking = blocking
 
     @abstractmethod     
-    def getType():
+    def getType(self):
         pass
 
-    @abstractmethod
-    def draw(self,window):
-        pass
 
 class Wall(Tile):
 
     def __init__(self, x, y, width, height, blocking = True):
         super().__init__(x, y, width, height, blocking)
-        self.wall = pygame.image.load('src/Textures/Industrial/CROSSCUBE.png')
+        self.image = pygame.image.load('src/Textures/Industrial/CROSSCUBE.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = width
+        self.rect.height = height
 
-    def getType():
+    def getType(self):
         return "wall"
 
-    def draw(self,window):
-        window.blit(self.wall,(self.x, self.y, self.width, self.height))
-        
 
 class Floor(Tile):
 
     def __init__(self, x, y, width, height, blocking = False):
         super().__init__(x, y, width, height, blocking)
-        self.floor = pygame.image.load('src/Textures/Wood/CREAKYWOOD.png')
+        self.image = pygame.image.load('src/Textures/Wood/CREAKYWOOD.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = width
+        self.rect.height = height
+        
 
-    def getType():
+    def getType(self):
         return "floor"
 
-    def draw(self,window):
-        window.blit(self.floor,(self.x, self.y, self.width, self.height))
 
+class Active(Tile):
+     
+    def __init__(self, x, y, width, height, blocking = False):
+        super().__init__(x, y, width, height, blocking)
+         
+    @abstractmethod
+    def getType(self):
+        pass
 
+class Passive(Tile):
+     
+    def __init__(self, x, y, width, height, blocking = False):
+        super().__init__(x, y, width, height, blocking)
         
+    @abstractmethod
+    def getType(self):
+        pass
+
+class Door(Passive):
+
+    def __init__(self, x, y, width, height, blocking = True):
+        super().__init__(x, y, width, height, blocking)
+        self.image = pygame.image.load('src/Textures/Doors/CREAKYDOOR.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = width
+        self.rect.height = height
+        self.master = None
+    def getType(self):
+        return "door"
+
+    def switch(self,action):
+        if action == 'open':
+            self.blocking = False
+            self.image = pygame.image.load('src/Textures/Urban/PAVEMENT.png').convert()
+        elif action == 'close':
+            self.blocking = True
+            self.image = pygame.image.load('src/Textures/Doors/CREAKYDOOR.png').convert()
+
+
+
+
+class Switch(Active):
+
+    def __init__(self, x, y, width, height, slave,action,blocking = False):
+        super().__init__(x, y, width, height, blocking)
+        self.image = pygame.image.load('src/Textures/Tech/BIGSQUARES.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = width
+        self.rect.height = height
+        self.slave = slave
+        self.action = action
+    def getType(self):
+        return "switch"
+    
+    def onEnter(self):
+        self.slave.switch(self.action)
+        print("Entered")
+
+
+
+
