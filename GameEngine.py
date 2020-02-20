@@ -89,8 +89,11 @@ def run():
          clock.tick(27)
 
          for event in pygame.event.get():
-             if event.type == pygame.QUIT:
-                 run = False
+            if event.type == pygame.QUIT:
+                run = False
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_RETURN]:
+                run = False
          redrawGameWindow()
 
 
