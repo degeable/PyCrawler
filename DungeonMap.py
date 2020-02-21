@@ -10,7 +10,7 @@ class DungeonMap():
 
     def __init__(self,width=200, height=200, level="level.txt"):
 
-        self.window = pygame.display.set_mode((width, height),RESIZABLE|HWSURFACE|DOUBLEBUF|FULLSCREEN)
+        self.window = pygame.display.set_mode((width, height),RESIZABLE|HWSURFACE|DOUBLEBUF)#|FULLSCREEN)
         #self.background = pygame.image.load('src/bg.jpg')
         self.level = self.loadLevel(level)
         self.tiles = pygame.sprite.Group()
