@@ -13,6 +13,7 @@ class Character(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.vel = vel
         #TODO plazer model based on type
+        #TODO remove map
         self.baseImage = pygame.image.load('src/Character/Char.png').convert()
         self.map = map
         self.left = pygame.transform.rotate(self.baseImage,270)
@@ -40,7 +41,7 @@ class Character(pygame.sprite.Sprite):
         pass
 
     @abstractmethod
-    def walk(self, window):
+    def walk(self):
         pass
 
 class Player(Character):
@@ -74,6 +75,7 @@ class Player(Character):
         hit_players.remove(self)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
+            #TODO remove the healtbar shit 
             #self.image = self.fightImage
             for player in hit_players:
                 if player.__class__.__name__ is not 'healthbar':
@@ -85,7 +87,7 @@ class Player(Character):
         
 
 
-    def walk(self, window,playerSprites,itemSprites):
+    def walk(self,map,playerSprites,itemSprites):
         
         if self.health < 0:
             self.isAlive = False
@@ -97,7 +99,7 @@ class Player(Character):
 
         if keys[pygame.K_LEFT]:
             self.rect.center  = [self.rect.center[0] - self.vel,self.rect.center[1]]
-            self.collision(self.map.tiles,playerSprites,itemSprites)
+            self.collision(map.tiles,playerSprites,itemSprites)
             self.walkDirection = 4
 
 
@@ -107,20 +109,20 @@ class Player(Character):
 
         if keys[pygame.K_RIGHT]:
             self.rect.center  = [self.rect.center[0] + self.vel,self.rect.center[1]]
-            self.collision(self.map.tiles,playerSprites,itemSprites)
+            self.collision(map.tiles,playerSprites,itemSprites)
             self.walkDirection = 6
 
 
 
         if keys[pygame.K_UP]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1]- self.vel]
-            self.collision(self.map.tiles,playerSprites,itemSprites)
+            self.collision(map.tiles,playerSprites,itemSprites)
             self.walkDirection = 8
 
 
         if keys[pygame.K_DOWN]:
             self.rect.center  = [self.rect.center[0] ,self.rect.center[1] + self.vel]
-            self.collision(self.map.tiles,playerSprites,itemSprites)
+            self.collision(map.tiles,playerSprites,itemSprites)
             self.walkDirection = 2    
 
         if keys[pygame.K_LEFT] and keys[pygame.K_DOWN]:
@@ -193,7 +195,7 @@ class WeakNpc(Character):
             if block.blocking == True:
                 self.rect.center = [ self.oldx, self.oldy]
 
-    def walk(self, window):
+    def walk(self,map,playerSprites,itemSprites):
         
         global counter
         global keys
@@ -206,7 +208,7 @@ class WeakNpc(Character):
         self.oldy = self.rect.y
         if keys == 1:
             self.rect.x -= self.vel
-            self.collision(self.map.tiles)
+            self.collision(map.tiles)
             self.walkDirection = 4
             self.image = self.left
             self.image.set_colorkey((0,0,0))
@@ -214,21 +216,21 @@ class WeakNpc(Character):
 
         if keys == 2:
             self.rect.x += self.vel
-            self.collision(self.map.tiles)
+            self.collision(map.tiles)
             self.walkDirection = 6
             self.image = self.right
             self.image.set_colorkey((0,0,0))
 
         if keys == 3:
             self.rect.y -= self.vel
-            self.collision(self.map.tiles)
+            self.collision(map.tiles)
             self.walkDirection = 8
             self.image = self.up
             self.image.set_colorkey((0,0,0))
 
         if keys == 4:
             self.rect.y += self.vel
-            self.collision(self.map.tiles)
+            self.collision(map.tiles)
             self.walkDirection = 2
             self.image = self.down
             self.image.set_colorkey((0,0,0))
