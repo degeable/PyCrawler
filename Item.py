@@ -28,7 +28,13 @@ class Pot(Item):
         self.type = 'pot'
 
     def onPickup(self,player):
-        player.health += self.healthImpact
+        if self.color == "blue":
+            player.health -= self.healthImpact
+        elif self.color == "red":
+            player.health += self.healthImpact
+            #TODO get a player.maxhealth variable and check for that (later for items)
+            if player.health >= 10:
+                player.health = 10
         self.pickedUp = True
         print("Picked up "+self.color+" Pot")
 

@@ -9,14 +9,18 @@ class Level():
     def __init__(self,file,width,height):
         self.map = self.loadMap(file[0],width,height)
         self.characters = self.loadCharacters(file[1])
-        self.healtbars = self.loadHealthbars()
+        self.healthbars = self.loadHealthbars()
         self.items = self.loadItems(file[2])
         self.fin = False
         self.itemSprites = pygame.sprite.Group()
         self.playerSprites = pygame.sprite.Group()
-        for (it,char) in zip(self.items, self.characters):
+        self.healthSprites = pygame.sprite.Group()
+        for it in self.items:
             self.itemSprites.add(it)
+        for char in self.characters: 
             self.playerSprites.add(char)
+        for bar in self.healthbars:
+            self.healthSprites.add(bar)
 
 
     def loadMap(self,file,width,height):
@@ -25,7 +29,7 @@ class Level():
     def loadCharacters(self,file):
         characters = []
         inputFile = open(file)
-        lines = inputFile.read().split("\t\n")
+        lines = inputFile.read().split("\n")
         for line in lines:
             chars = str(line).split()
             if chars[0] == 'P':
@@ -47,7 +51,7 @@ class Level():
     def loadItems(self,file):
         items = []
         inputFile = open(file)
-        lines = inputFile.read().split("\t\n")
+        lines = inputFile.read().split("\n")
         for line in lines:
             chars = str(line).split()
             if chars[0] == 'PB':

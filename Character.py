@@ -15,6 +15,7 @@ class Character(pygame.sprite.Sprite):
         #TODO plazer model based on type
         #TODO remove map
         self.baseImage = pygame.image.load('src/Character/Char.png').convert()
+        self.deadImage = pygame.image.load('src/Character/CharDead.png').convert()
         self.map = map
         self.left = pygame.transform.rotate(self.baseImage,270)
         self.right = pygame.transform.rotate(self.baseImage,90)
@@ -89,7 +90,7 @@ class Player(Character):
 
     def walk(self,map,playerSprites,itemSprites):
         
-        if self.health < 0:
+        if self.health <= 0:
             self.isAlive = False
 
 
@@ -197,6 +198,10 @@ class WeakNpc(Character):
 
     def walk(self,map,playerSprites,itemSprites):
         
+        if self.health <= 0:
+            self.isAlive = False
+
+
         global counter
         global keys
         counter += 1
