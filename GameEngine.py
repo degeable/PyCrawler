@@ -23,8 +23,8 @@ level = Level.Level(files,map_width,map_height)
 
 def redrawGameWindow():
     level.map.drawMap()
-    #FIXME why is there stuff missing????
-    for character,bar,item in zip(level.characters,level.healtbars,level.items):
+    """
+    for character,bar,item in zip(level.characters,level.healthbars,level.items):
         if character.isAlive:
             character.walk(level.map,level.playerSprites,level.itemSprites)
             bar.update()
@@ -35,20 +35,26 @@ def redrawGameWindow():
     level.characters[1].walk(level.map,level.playerSprites,level.itemSprites)
     """
     for character in level.characters:
-        character.walk(level.map,level.playerSprites,level.itemSprites)
-    for bar in level.healtbars:
+        if character.isAlive:
+            character.walk(level.map,level.playerSprites,level.itemSprites)
+        else:
+            character.image = character.deadImage
+            character.image.set_colorkey((0,0,0)) 
+    for bar in level.healthbars:
         bar.update()
     for item in level.items:
         if item.pickedUp == True and item.type is not 'weapon':
             level.itemSprites.remove(item)
         if item.pickedUp == True and item.type is 'weapon':
-            level.item.image  = pygame.transform.scale(item.image,(12,12))
-     """
-
+            #img = level.item.image
+            item.image  = pygame.transform.scale(item.image,(12,12))
+  
     level.itemSprites.update()
     level.itemSprites.draw(level.map.window)
     level.playerSprites.update()
     level.playerSprites.draw(level.map.window)
+    level.healthSprites.update()
+    level.healthSprites.draw(level.map.window)
     pygame.display.update()
 
 def text_objects(text,font):
