@@ -3,14 +3,16 @@ import Item
 import pygame
 import Character
 import healtbar
-
+import json
 class Level():
 
-    def __init__(self,file,width,height):
-        self.map = self.loadMap(file[0],width,height)
-        self.characters = self.loadCharacters(file[1])
+    def __init__(self,file):
+        with open(file) as json_file:
+            data = json.load(json_file)
+        self.map = self.loadMap(data["map"]["src"],data["doors"].items(),data["switches"].items(),int(data["map"]["width"]),int(data["map"]["height"]))
+        self.characters = self.loadCharacters(data["player"].items())
         self.healthbars = self.loadHealthbars()
-        self.items = self.loadItems(file[2])
+        self.items = self.loadItems(data["items"].items())
         self.fin = False
         self.itemSprites = pygame.sprite.Group()
         self.playerSprites = pygame.sprite.Group()
@@ -23,23 +25,22 @@ class Level():
             self.healthSprites.add(bar)
 
 
-    def loadMap(self,file,width,height):
-        return DungeonMap.DungeonMap(width,height)
+    def loadMap(self,file,doors,switches,width,height):
+        return DungeonMap.DungeonMap(width,height,file,doors,switches)
 
-    def loadCharacters(self,file):
+    def loadCharacters(self,player):
         characters = []
-        inputFile = open(file)
-        lines = inputFile.read().split("\n")
-        for line in lines:
-            chars = str(line).split()
+        for p in player:
+            chars = str(p[1]).split()
+            print(chars)
             if chars[0] == 'P':
-                characters.append(Character.Player(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6])))
+                characters.append(Character.Player(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6]), int (chars[7])))
             elif chars[0] == 'A':
-                characters.append(Character.AttackNpc(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6])))
+                characters.append(Character.AttackNpc(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6]), int (chars[7])))
             elif chars[0] == 'W':
-                characters.append(Character.WeakNpc(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6])))
+                characters.append(Character.WeakNpc(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6]), int (chars[7])))
             elif chars[0] == 'S':
-                characters.append(Character.StationaryNpc(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6])))
+                characters.append(Character.StationaryNpc(int(chars[1]),int(chars[2]),int(chars[3]),int(chars[4]),int(chars[5]),int(chars[6]), int (chars[7])))
         return characters
 
     def loadHealthbars(self):
@@ -48,12 +49,10 @@ class Level():
             bars.append(healtbar.healthbar(player))
         return bars
 
-    def loadItems(self,file):
+    def loadItems(self,item):
         items = []
-        inputFile = open(file)
-        lines = inputFile.read().split("\n")
-        for line in lines:
-            chars = str(line).split()
+        for i in item:
+            chars = str(i[1]).split()
             if chars[0] == 'PB':
                 items.append(Item.Pot('blue',int(chars[1]),int(chars[2]),int(chars[3])))
             elif chars[0] == 'PR':

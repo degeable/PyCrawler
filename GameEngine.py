@@ -13,30 +13,16 @@ pygame.display.set_caption("PyCrawler1.0")
 
 
 largeText = pygame.font.Font('freesansbold.ttf',40)
-files = ["level.txt","chars.txt","items.txt"]
-map_width = 610
-map_height = 320
 clock = pygame.time.Clock()
 
-level = Level.Level(files,map_width,map_height)
-
+level = Level.Level("level.json")
 
 def redrawGameWindow():
     level.map.drawMap()
-    """
-    for character,bar,item in zip(level.characters,level.healthbars,level.items):
-        if character.isAlive:
-            character.walk(level.map,level.playerSprites,level.itemSprites)
-            bar.update()
-        if item.pickedUp == True and item.type is not 'weapon':
-            level.itemSprites.remove(item)
-        if item.pickedUp == True and item.type is 'weapon':
-            level.item.image  = pygame.transform.scale(item.image,(12,12))
-    level.characters[1].walk(level.map,level.playerSprites,level.itemSprites)
-    """
+
     for character in level.characters:
         if character.isAlive:
-            character.walk(level.map,level.playerSprites,level.itemSprites)
+            character.walk(level.characters[0],level.map,level.playerSprites,level.itemSprites)
         else:
             character.image = character.deadImage
             character.image.set_colorkey((0,0,0)) 
@@ -75,7 +61,8 @@ def game_menu():
             intro = False
         level.map.window.fill((255,255,255))
         TextSurf,TextRect = text_objects("Hello! Welcome to PyCrawler!",largeText)
-        TextRect.center = ((map_width/2),(map_height/2))
+        #TODO get map width and height right here
+        TextRect.center = ((576/2),(288/2))
         level.map.window.blit(TextSurf,TextRect)
         pygame.display.update()
         clock.tick(15)

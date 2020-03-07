@@ -73,8 +73,9 @@ class Passive(Tile):
 
 class Door(Passive):
 
-    def __init__(self, x, y, width, height, blocking = True):
+    def __init__(self, x, y, width, height, id, blocking = True):
         super().__init__(x, y, width, height, blocking)
+        self.id = id
         self.image = pygame.image.load('src/Textures/Doors/CREAKYDOOR.png').convert()
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -108,6 +109,8 @@ class Switch(Active):
         self.rect.height = height
         self.slave = slave
         self.action = action
+        self.player = None
+        #TODO place player
     def getType(self):
         return "switch"
     

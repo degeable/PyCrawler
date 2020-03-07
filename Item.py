@@ -36,7 +36,7 @@ class Pot(Item):
             if player.health >= 10:
                 player.health = 10
         self.pickedUp = True
-        print("Picked up "+self.color+" Pot")
+        print("Picked up "+self.color+" Pot with impact: "+str(self.healthImpact))
 
 class Weapon(Item):
 
